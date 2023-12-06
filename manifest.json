@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "Clone with Fork",
+    "description": "Open GitHub clone path with Fork.",
+    "version": "1.0.0",
+    "action": {
+        "default_icon": "fork.jpg"
+    },
+    "permissions": [
+        "activeTab",
+        "webNavigation"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://github.com/*"
+            ],
+            "js": [
+                "dist/index.js"
+            ]
+        }
+    ]
+}

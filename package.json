@@ -1,0 +1,8 @@
+{
+    "name": "clone-with-fork-extension",
+    "author": "Eden",
+    "scripts": {},
+    "devDependencies": {
+        "@types/chrome": "^0.0.253"
+    }
+}
