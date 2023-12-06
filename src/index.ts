@@ -6,15 +6,7 @@ const Lang = {
     title: "Open with Fork"
 };
 
-function onWebPageLoadComplete() {
-    tryHandleRootIfNeed();
-    startObserveMenuCreate();
-}
-
-function tryHandleRootIfNeed() {
-    const rootNode = document.getElementById(DocumnetIds.menuroot);
-    handleMenuRoot(rootNode);
-}
+startObserveMenuCreate();
 
 function startObserveMenuCreate() {
     const targetNode = document.body;
@@ -71,11 +63,3 @@ function onFork(event: Event) {
         window.location.href = cloneUrl;
     }
 }
-
-const handler = setInterval(() => {
-    if (document.readyState !== 'complete') {
-        return;
-    }
-    clearInterval(handler);
-    onWebPageLoadComplete();
-}, 500);
