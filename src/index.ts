@@ -43,7 +43,7 @@ function parseMenuPanel(menuPanel: Node) {
         });
         let innerMenu = menuChild?.lastChild?.lastChild;
         let cloneNode = innerMenu?.firstChild;
-        if (cloneNode) {
+        if (cloneNode && cloneNode["role"] == "menuitem") {
             let forkNode = cloneNode.cloneNode(true);
             innerMenu.insertBefore(forkNode, cloneNode);
             const titleNode = forkNode.lastChild?.lastChild;
