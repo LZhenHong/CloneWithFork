@@ -7,7 +7,13 @@ const Lang = {
 };
 
 function onWebPageLoadComplete() {
+    tryHandleRootIfNeed();
     startObserveMenuCreate();
+}
+
+function tryHandleRootIfNeed() {
+    const rootNode = document.getElementById(DocumnetIds.menuroot);
+    handleMenuRoot(rootNode);
 }
 
 function startObserveMenuCreate() {
@@ -20,22 +26,22 @@ function startObserveMenuCreate() {
 function handleMutation(mutationsList: MutationRecord[], observer: MutationObserver) {
     for (const mutation of mutationsList) {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            // @ts-ignore
             const id = mutation.target['id'];
             if (id === DocumnetIds.menuroot) {
-                let child = mutation.target.lastChild;
-                if (child) {
-                    parseMenuPanel(child);
-                }
+                handleMenuRoot(mutation.target);
             }
         }
     }
 }
 
-function parseMenuPanel(menuPanel: Node) {
-    let child = menuPanel.lastChild;
+function handleMenuRoot(menuRoot: Node) {
+    if (!menuRoot) {
+        return;
+    }
+
+    let child = menuRoot?.lastChild?.lastChild;
     if (child) {
-        let menuChild: Node | null = null;
+        let menuChild: Node = null;
         child.childNodes.forEach(node => {
             if (!menuChild && node.nodeName == "DIV") {
                 menuChild = node.lastChild;
@@ -72,4 +78,4 @@ const handler = setInterval(() => {
     }
     clearInterval(handler);
     onWebPageLoadComplete();
-}, 1000);
+}, 500);
