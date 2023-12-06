@@ -3,8 +3,11 @@
     "name": "Clone with Fork",
     "description": "Open GitHub clone path with Fork.",
     "version": "1.0.0",
-    "action": {
-        "default_icon": "fork.jpg"
+    "icons": {
+        "16": "fork.png",
+        "32": "fork.png",
+        "48": "fork.png",
+        "128": "fork.png"
     },
     "permissions": [
         "activeTab",
