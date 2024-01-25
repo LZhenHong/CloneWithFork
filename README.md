@@ -2,6 +2,10 @@
 
 A Chrome extension which clone GitHub repository with [Fork](https://fork.dev/) app.
 
+## How To Use
+
+<img src="snapshot.png">
+
 ## Build
 
 ```bash
