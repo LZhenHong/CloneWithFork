@@ -54,7 +54,7 @@ function handleMenuRoot(menuRoot: Node) {
 }
 
 function onFork(event: Event) {
-    const urlScheme = "github-mac://openRepo/";
+    const urlScheme = "x-github-client://openRepo/";
     const entireHtml = document.documentElement.outerHTML;
     let matches = entireHtml.match(/git@github\.com:[A-Za-z0-9_.-]+\/([A-Za-z0-9_.-]+)\.git/gm);
     if (matches && matches.length > 0) {
