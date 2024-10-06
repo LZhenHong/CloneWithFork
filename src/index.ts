@@ -35,13 +35,13 @@ function handleMenuRoot(menuRoot: Node) {
     if (child) {
         let menuChild: Node = null;
         child.childNodes.forEach(node => {
-            if (!menuChild && node.nodeName == "DIV") {
+            if (!menuChild && node.nodeName == "UL") {
                 menuChild = node.lastChild;
             }
         });
-        let innerMenu = menuChild?.lastChild?.lastChild;
+        let innerMenu = menuChild?.lastChild;
         let cloneNode = innerMenu?.firstChild;
-        if (cloneNode && cloneNode["role"] == "menuitem") {
+        if (cloneNode) {
             let forkNode = cloneNode.cloneNode(true);
             innerMenu.insertBefore(forkNode, cloneNode);
             const titleNode = forkNode.lastChild?.lastChild;
