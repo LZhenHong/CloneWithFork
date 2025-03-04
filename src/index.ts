@@ -43,7 +43,7 @@ function handleMenuRoot(menuRoot: Node) {
         let cloneNode = innerMenu?.firstChild;
         if (cloneNode) {
             let forkNode = cloneNode.cloneNode(true);
-            innerMenu.insertBefore(forkNode, cloneNode);
+            innerMenu.replaceChild(forkNode, cloneNode);
             const titleNode = forkNode.lastChild?.lastChild;
             if (titleNode) {
                 titleNode.textContent = Lang.title;
