@@ -35,7 +35,7 @@ function handleMenuRoot(menuRoot: Node) {
     if (child) {
         let menuChild: Node = null;
         child.childNodes.forEach(node => {
-            if (!menuChild && node.nodeName == "UL") {
+            if (!menuChild && node.nodeName == "DIV") {
                 menuChild = node.lastChild;
             }
         });
