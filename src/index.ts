@@ -35,7 +35,8 @@ function handleMenuRoot(menuRoot: Node) {
     if (child) {
         let menuChild: Node = null;
         child.childNodes.forEach(node => {
-            if (!menuChild && node.nodeName == "DIV") {
+            if (!menuChild && node.nodeName == "DIV" && node.lastChild &&
+                node.lastChild.textContent.indexOf("Open with GitHub Desktop") > -1) {
                 menuChild = node.lastChild;
             }
         });
