@@ -61,6 +61,13 @@ function onFork(event: Event) {
     if (matches && matches.length > 0) {
         const sshUrl = matches[0];
         const cloneUrl = `${urlScheme}${sshUrl}`;
-        window.location.href = cloneUrl;
+        
+        // Safari 兼容性：使用 try-catch 处理可能的权限问题
+        try {
+            window.location.href = cloneUrl;
+        } catch (error) {
+            // 如果直接跳转失败，尝试在新窗口打开
+            window.open(cloneUrl, '_blank');
+        }
     }
 }

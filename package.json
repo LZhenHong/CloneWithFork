@@ -1,8 +1,13 @@
 {
     "name": "clone-with-fork-extension",
     "author": "Eden",
-    "scripts": {},
+    "scripts": {
+        "build": "tsc",
+        "build:chrome": "npm run build && cp manifest-chrome.json dist/manifest.json && cp fork.png dist/",
+        "build:safari": "npm run build && cp manifest-safari.json dist/manifest.json && cp fork.png dist/"
+    },
     "devDependencies": {
-        "@types/chrome": "^0.0.253"
+        "@types/chrome": "^0.0.253",
+        "typescript": "^5.0.0"
     }
 }

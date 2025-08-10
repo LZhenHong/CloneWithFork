@@ -1,0 +1,29 @@
+{
+    "manifest_version": 2,
+    "name": "Clone with Fork",
+    "description": "Open GitHub clone path with Fork.",
+    "version": "1.0.0",
+    "icons": {
+        "16": "fork.png",
+        "32": "fork.png",
+        "48": "fork.png",
+        "128": "fork.png"
+    },
+    "permissions": [
+        "activeTab",
+        "*://github.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://github.com/*"
+            ],
+            "js": [
+                "index.js"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        "fork.png"
+    ]
+}
