@@ -1,73 +1,85 @@
-const DocumnetIds = {
+const DocumentIds = {
     menuroot: "__primerPortalRoot__"
 };
 
 const Lang = {
-    title: "Open with Fork"
+    title: "Open with Fork",
+    original: "Open with GitHub Desktop"
 };
+
+const PROCESSED_ATTR = "data-fork-processed";
 
 startObserveMenuCreate();
 
 function startObserveMenuCreate() {
-    const targetNode = document.body;
-    const config = { childList: true, subtree: true };
     const observer = new MutationObserver(handleMutation);
-    observer.observe(targetNode, config);
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
-function handleMutation(mutationsList: MutationRecord[], observer: MutationObserver) {
+function handleMutation(mutationsList: MutationRecord[]) {
     for (const mutation of mutationsList) {
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            const id = mutation.target['id'];
-            if (id === DocumnetIds.menuroot) {
-                handleMenuRoot(mutation.target);
-            }
+        const target = mutation.target as Element;
+        if (target.id === DocumentIds.menuroot) {
+            handleMenuRoot(target);
         }
     }
 }
 
-function handleMenuRoot(menuRoot: Node) {
-    if (!menuRoot) {
+function handleMenuRoot(portalRoot: Element) {
+    if (portalRoot.hasAttribute(PROCESSED_ATTR)) {
         return;
     }
 
-    let child = menuRoot?.lastChild?.lastChild;
-    if (child) {
-        let menuChild: Node = null;
-        child.childNodes.forEach(node => {
-            if (!menuChild && node.nodeName == "DIV" && node.lastChild &&
-                node.lastChild.textContent.indexOf("Open with GitHub Desktop") > -1) {
-                menuChild = node.lastChild;
-            }
-        });
-        let innerMenu = menuChild?.lastChild;
-        let cloneNode = innerMenu?.firstChild;
-        if (cloneNode) {
-            let forkNode = cloneNode.cloneNode(true);
-            innerMenu.replaceChild(forkNode, cloneNode);
-            const titleNode = forkNode.lastChild?.lastChild;
-            if (titleNode) {
-                titleNode.textContent = Lang.title;
-            }
-            forkNode.addEventListener("click", onFork);
+    const allElements = portalRoot.querySelectorAll("*");
+    let desktopItem: Element | null = null;
+
+    for (let i = 0; i < allElements.length; i++) {
+        if (allElements[i].textContent?.trim() === Lang.original) {
+            desktopItem = allElements[i];
+            break;
+        }
+    }
+
+    if (!desktopItem) {
+        return;
+    }
+
+    const button = desktopItem.closest("button, a, [role='menuitem']");
+    if (!button) {
+        return;
+    }
+
+    portalRoot.setAttribute(PROCESSED_ATTR, "true");
+
+    const forkButton = button.cloneNode(true) as Element;
+    forkButton.textContent = Lang.title;
+    button.parentNode?.replaceChild(forkButton, button);
+    forkButton.addEventListener("click", onFork);
+}
+
+function onFork(event: Event) {
+    const sshUrl = findSshUrl();
+    if (sshUrl) {
+        const cloneUrl = `x-github-client://openRepo/${sshUrl}`;
+        try {
+            window.location.href = cloneUrl;
+        } catch (error) {
+            window.open(cloneUrl, '_blank');
         }
     }
 }
 
-function onFork(event: Event) {
-    const urlScheme = "x-github-client://openRepo/";
-    const entireHtml = document.documentElement.outerHTML;
-    let matches = entireHtml.match(/git@github\.com:[A-Za-z0-9_.-]+\/([A-Za-z0-9_.-]+)\.git/gm);
-    if (matches && matches.length > 0) {
-        const sshUrl = matches[0];
-        const cloneUrl = `${urlScheme}${sshUrl}`;
-        
-        // Safari 兼容性：使用 try-catch 处理可能的权限问题
-        try {
-            window.location.href = cloneUrl;
-        } catch (error) {
-            // 如果直接跳转失败，尝试在新窗口打开
-            window.open(cloneUrl, '_blank');
+function findSshUrl(): string | null {
+    const inputs = document.querySelectorAll("input");
+    for (let i = 0; i < inputs.length; i++) {
+        const input = inputs[i];
+        const match = input.value.match(/^git@github\.com:[^\s]+\.git$/);
+        if (match) {
+            return input.value;
         }
     }
+
+    const html = document.documentElement.outerHTML;
+    const match = html.match(/git@github\.com:[A-Za-z0-9_.\-]+\/[A-Za-z0-9_.\-]+\.git/);
+    return match ? match[0] : null;
 }
