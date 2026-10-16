@@ -3,14 +3,16 @@ const ORIGINAL = "Open with GitHub Desktop";
 const TITLE = "Open with Fork";
 const HIDDEN = "Open in GitHub Copilot app";
 
-new MutationObserver(function(ms) {
+var PORTAL_OBSERVER = new MutationObserver(function(ms) {
     var root = document.getElementById(ROOT_ID);
     if (!root) return;
     for (var i = 0; i < ms.length; i++) {
         var t = ms[i].target as Element;
         if (t === root || root.contains(t)) replace(root);
     }
-}).observe(document.body, { childList: true, subtree: true });
+});
+PORTAL_OBSERVER.observe(document.body, { childList: true, subtree: true });
+replace(document.getElementById(ROOT_ID) || document.body);
 
 function replace(root: Element) {
     var items = root.querySelectorAll("button, a, [role='menuitem']");
@@ -34,6 +36,7 @@ function replace(root: Element) {
                     e.preventDefault();
                     e.stopPropagation();
                     openFork();
+                    return false;
                 };
                 promoteOpenItem(el);
                 break;
@@ -85,8 +88,19 @@ function isMenuItem(el: Element) {
 }
 
 function openFork() {
-    var m = document.documentElement.outerHTML.match(/git@github\.com:[\w.-]+\/[\w.-]+\.git/);
-    if (!m) return;
-    var url = "x-github-client://openRepo/" + m[0];
+    var ssh = findSshUrl();
+    if (!ssh) return true;
+    var url = "x-github-client://openRepo/" + ssh;
     try { location.href = url; } catch (e) { window.open(url, "_blank"); }
+    return true;
+}
+
+function findSshUrl(): string | null {
+    var m = document.documentElement.outerHTML.match(/git@github\.com:[\w.-]+\/[\w.-]+\.git/);
+    if (m) return m[0];
+    // Fallback: derive the SSH URL from the current page path when GitHub only
+    // renders the HTTPS clone URL (user switched protocol to HTTPS).
+    var parts = location.pathname.match(/^\/([\w.-]+)\/([\w.-]+)/);
+    if (parts) return "git@github.com:" + parts[1] + "/" + parts[2] + ".git";
+    return null;
 }
